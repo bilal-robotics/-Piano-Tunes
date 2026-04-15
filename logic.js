@@ -310,7 +310,7 @@ async function handleRegister() {
 
     try {
         // Pehle check karo ke email repeat hai ya nahi
-        const checkRes = await fetch('http://127.0.0.1:5000/check_email', {
+        const checkRes = await fetch('https://Bilalsaqib.pythonanywhere.com/check_email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email })
@@ -320,7 +320,7 @@ async function handleRegister() {
         if (checkData.is_repeat) {
             // Repeat user - seedha entry karo aur game kholo
             btn.textContent = "Opening Piano...";
-            const verifyRes = await fetch('http://127.0.0.1:5000/verify_otp', {
+            const verifyRes = await fetch('https://Bilalsaqib.pythonanywhere.com/verify_otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: name, email: email, otp: 'REPEAT_BYPASS' })
@@ -336,7 +336,7 @@ async function handleRegister() {
         } else {
             // Naya user - OTP bhejo
             btn.textContent = "Sending OTP...";
-            const otpRes = await fetch('http://127.0.0.1:5000/send_otp', {
+            const otpRes = await fetch('https://Bilalsaqib.pythonanywhere.com/send_otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email })
@@ -375,7 +375,7 @@ async function resendOTP() {
     if (timerInterval) clearInterval(timerInterval);
 
     try {
-        const res = await fetch('http://127.0.0.1:5000/send_otp', {
+        const res = await fetch('https://Bilalsaqib.pythonanywhere.com/send_otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email })
@@ -417,7 +417,7 @@ async function verifyOTP() {
     msg.textContent = "Verifying...";
 
     try {
-        const res = await fetch('http://127.0.0.1:5000/verify_otp', {
+        const res = await fetch('https://Bilalsaqib.pythonanywhere.com/verify_otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
