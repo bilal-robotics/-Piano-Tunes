@@ -48,6 +48,20 @@ A **24-bar reactive spectrum visualizer** that maps piano frequencies to real-ti
 3. **Play:** Open `main.html` and verify your email to unlock the keyboard.
 
 ---
+## 📜 Copyright
 
+© 2026 Bilal Saqib. All Rights Reserved.
+
+This project is created for learning and demonstration purposes.  
+Unauthorized copying or commercial use without permission is not allowed.
+
+---
+
+## 🔗 Connect with Me
+
+- 💼 LinkedIn: https://www.linkedin.com/in/bilal-robotics-iot/
+- 👨‍💻 GitHub: https://github.com/your-username
+
+---
 **Developed by:** Bilal | *Technical Researcher*
 **Location:** Faisalabad, Pakistan
