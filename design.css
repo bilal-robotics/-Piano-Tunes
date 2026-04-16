@@ -24,6 +24,16 @@ html, body {
   color: var(--text);
   font-family: 'Space Mono', monospace;
   overflow-x: hidden;
+  
+  /* --- ZOOM AUR SELECTION ROKNE KE LIYE --- */
+  touch-action: manipulation; 
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Ye alag se add kar den taaki buttons par bhi asar ho */
+.keys-area, .ctrl-btn, .nav-link {
+  touch-action: manipulation;
 }
 
 /* Stars background */
