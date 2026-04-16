@@ -321,10 +321,11 @@ async function handleRegister() {
         });
         const checkData = await checkRes.json();
 
-        if (checkData.is_repeat) {
-            // Repeat user - seedha entry
-            btn.textContent = "Opening Piano...";
-            closeModal();
+       if (checkData.is_repeat) {
+    btn.textContent = "Opening Piano...";
+    btn.disabled = false; // Ye line add karein taake button dobara kaam kare
+    closeModal();
+
         } else {
             // NAYA USER - AB EMAILJS USE HOGA
             btn.textContent = "Sending OTP...";
