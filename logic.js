@@ -293,6 +293,10 @@ for (let i = 0; i < 24; i++) {
 // Har refresh par form show hoga (no localStorage)
 // Backend se check hoga repeat user ya nahi
 
+// 1. Global variables
+let generatedOTP; 
+let timerInterval;
+
 async function handleRegister() {
     const name = document.getElementById('username').value.trim();
     const email = document.getElementById('useremail').value.trim();
@@ -309,7 +313,7 @@ async function handleRegister() {
     msg.textContent = "";
 
     try {
-        // Pehle check karo ke email repeat hai ya nahi
+        // Step 1: Check repeat email (PythonAnywhere is okay for this)
         const checkRes = await fetch('https://Bilalsaqib.pythonanywhere.com/check_email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -318,129 +322,102 @@ async function handleRegister() {
         const checkData = await checkRes.json();
 
         if (checkData.is_repeat) {
-            // Repeat user - seedha entry karo aur game kholo
+            // Repeat user - seedha entry
             btn.textContent = "Opening Piano...";
-            const verifyRes = await fetch('https://Bilalsaqib.pythonanywhere.com/verify_otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: name, email: email, otp: 'REPEAT_BYPASS' })
-            });
-            const verifyData = await verifyRes.json();
-            if (verifyData.status === "success" || verifyData.status === "repeat") {
-                closeModal();
-            } else {
-                msg.textContent = "Error: " + verifyData.message;
-                btn.disabled = false;
-                btn.textContent = "Send Verification Code";
-            }
+            closeModal();
         } else {
-            // Naya user - OTP bhejo
+            // NAYA USER - AB EMAILJS USE HOGA
             btn.textContent = "Sending OTP...";
-            const otpRes = await fetch('https://Bilalsaqib.pythonanywhere.com/send_otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email })
-            });
-            const otpData = await otpRes.json();
+            
+            // 2. OTP Generate karein
+            generatedOTP = Math.floor(100000 + Math.random() * 900000);
 
-            if (otpData.status === "success") {
-                document.getElementById('email-display').textContent = email;
-                document.getElementById('reg-step').style.display = 'none';
-                document.getElementById('otp-step').style.display = 'block';
-                startTimer(300); // 5 minutes
-            } else {
-                msg.textContent = "Error: " + otpData.message;
-                btn.disabled = false;
-                btn.textContent = "Send Verification Code";
-            }
+            // 3. EmailJS Data
+            const templateParams = {
+                user_name: name,
+                user_email: email,
+                otp_code: generatedOTP
+            };
+
+            // 4. EmailJS Send
+            emailjs.send('service_e2620ra', 'template_3rivrlb', templateParams)
+                .then(() => {
+                    document.getElementById('email-display').textContent = email;
+                    document.getElementById('reg-step').style.display = 'none';
+                    document.getElementById('otp-step').style.display = 'block';
+                    startTimer(300); // 5 minutes
+                })
+                .catch((err) => {
+                    msg.textContent = "Email Service Error! Check Public Key.";
+                    btn.disabled = false;
+                    btn.textContent = "Send Verification Code";
+                    console.error(err);
+                });
         }
     } catch (err) {
-        msg.textContent = "Backend not connected! Run Python script first.";
+        msg.textContent = "Connection Error! Try again.";
         btn.disabled = false;
-        btn.textContent = "Send Verification Code";
         console.error(err);
     }
 }
 
 async function resendOTP() {
+    const name = document.getElementById('username').value.trim();
     const email = document.getElementById('useremail').value.trim();
     const resendBtn = document.getElementById('resend-btn');
     const msg = document.getElementById('otp-msg');
 
     resendBtn.disabled = true;
     resendBtn.textContent = "Sending...";
-    msg.textContent = "";
 
-    // Purana timer band karo
     if (timerInterval) clearInterval(timerInterval);
 
-    try {
-        const res = await fetch('https://Bilalsaqib.pythonanywhere.com/send_otp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email })
-        });
-        const data = await res.json();
+    generatedOTP = Math.floor(100000 + Math.random() * 900000);
 
-        if (data.status === "success") {
-            msg.style.color = '#38bdf8';
-            msg.textContent = "New OTP sent!";
-            document.getElementById('otp-input').value = '';
-            startTimer(300); // Reset to 5 min
-        } else {
-            msg.style.color = '#f472b6';
-            msg.textContent = "Error: " + data.message;
-        }
-    } catch (err) {
-        msg.style.color = '#f472b6';
-        msg.textContent = "Backend error!";
-    }
-
-    resendBtn.disabled = false;
-    resendBtn.textContent = "🔄 Resend OTP";
+    emailjs.send('service_e2620ra', 'template_3rivrlb', {
+        user_name: name,
+        user_email: email,
+        otp_code: generatedOTP
+    })
+    .then(() => {
+        msg.style.color = '#38bdf8';
+        msg.textContent = "New OTP sent!";
+        document.getElementById('otp-input').value = '';
+        startTimer(300);
+    })
+    .catch(() => {
+        msg.textContent = "Failed to resend!";
+    })
+    .finally(() => {
+        resendBtn.disabled = false;
+        resendBtn.textContent = "🔄 Resend OTP";
+    });
 }
 
-async function verifyOTP() {
-    const payload = {
-        name: document.getElementById('username').value.trim(),
-        email: document.getElementById('useremail').value.trim(),
-        otp: document.getElementById('otp-input').value.trim()
-    };
+function verifyOTP() {
+    const userOTP = document.getElementById('otp-input').value.trim();
     const msg = document.getElementById('otp-msg');
 
-    if (!payload.otp) {
+    if (!userOTP) {
         msg.textContent = "Please enter the OTP!";
         return;
     }
 
-    msg.style.color = '#fbbf24';
-    msg.textContent = "Verifying...";
-
-    try {
-        const res = await fetch('https://Bilalsaqib.pythonanywhere.com/verify_otp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-
-        if (data.status === "success") {
-            if (timerInterval) clearInterval(timerInterval);
-            closeModal();
-        } else {
-            msg.style.color = '#f472b6';
-            msg.textContent = data.message;
-        }
-    } catch (err) {
+    // JS mein hi verification (Fast aur Reliable)
+    if (userOTP == generatedOTP) {
+        if (timerInterval) clearInterval(timerInterval);
+        msg.style.color = '#4ade80';
+        msg.textContent = "Verified!";
+        setTimeout(closeModal, 1000);
+    } else {
         msg.style.color = '#f472b6';
-        msg.textContent = "Backend error!";
+        msg.textContent = "Invalid OTP! Try again.";
     }
 }
 
 function closeModal() {
     document.getElementById('user-modal').style.display = 'none';
 }
-
 function startTimer(totalSeconds) {
     if (timerInterval) clearInterval(timerInterval);
     const display = document.getElementById('timer-display');
@@ -476,5 +453,9 @@ function startTimer(totalSeconds) {
         resendBtn.disabled = false;
     }, (totalSeconds - 90) * 1000); // 3:30 ke baad resend enable
 }
+// logic.js ki aakhri lines mein jahan buildPiano() hai, wahan ye confirm karein
+(function(){
+    emailjs.init("dnyMhpsqF8cXW3F1Gya"); // Yahan bhi apni key dal dein
+})();
 
 buildPiano();
