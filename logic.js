@@ -367,37 +367,74 @@ async function handleRegister() {
     }
 }
 
-async function resendOTP() {
+async function handleRegister() {
     const name = document.getElementById('username').value.trim();
     const email = document.getElementById('useremail').value.trim();
-    const resendBtn = document.getElementById('resend-btn');
-    const msg = document.getElementById('otp-msg');
+    const btn = document.getElementById('send-btn');
+    const msg = document.getElementById('reg-msg');
 
-    resendBtn.disabled = true;
-    resendBtn.textContent = "Sending...";
+    if (!name || !email) {
+        msg.textContent = "Please fill in both fields!";
+        return;
+    }
 
-    if (timerInterval) clearInterval(timerInterval);
+    // Button ko lock karein taake user baar baar click na kare
+    btn.disabled = true;
+    btn.textContent = "Checking...";
+    msg.textContent = "";
 
+    try {
+        // Step 1: Backend check (PythonAnywhere)
+        const checkRes = await fetch('https://Bilalsaqib.pythonanywhere.com/check_email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+        });
+        const checkData = await checkRes.json();
+
+        if (checkData.is_repeat) {
+            // Agar purana user hai
+            btn.textContent = "Opening Piano...";
+            setTimeout(() => {
+                closeModal();
+                btn.disabled = false;
+                btn.textContent = "Send Verification Code";
+            }, 1000);
+        } else {
+            // Naya user hai to OTP bhejein
+            sendEmailJS(name, email, btn, msg);
+        }
+    } catch (err) {
+        // AGAR BACKEND ERROR DE (Network issue), TO BHI OTP BHEJ DO
+        console.log("Backend offline, bypassing to EmailJS...");
+        sendEmailJS(name, email, btn, msg);
+    }
+}
+
+// Ye helper function EmailJS bhejta hai aur button reset karta hai
+function sendEmailJS(name, email, btn, msg) {
+    btn.textContent = "Sending OTP...";
     generatedOTP = Math.floor(100000 + Math.random() * 900000);
 
-    emailjs.send('service_e2620ra', 'template_3rivrlb', {
+    const templateParams = {
         user_name: name,
         user_email: email,
         otp_code: generatedOTP
-    })
-    .then(() => {
-        msg.style.color = '#38bdf8';
-        msg.textContent = "New OTP sent!";
-        document.getElementById('otp-input').value = '';
-        startTimer(300);
-    })
-    .catch(() => {
-        msg.textContent = "Failed to resend!";
-    })
-    .finally(() => {
-        resendBtn.disabled = false;
-        resendBtn.textContent = "🔄 Resend OTP";
-    });
+    };
+
+    emailjs.send('service_e2620ra', 'template_3rivrlb', templateParams)
+        .then(() => {
+            document.getElementById('email-display').textContent = email;
+            document.getElementById('reg-step').style.display = 'none';
+            document.getElementById('otp-step').style.display = 'block';
+            startTimer(300);
+        })
+        .catch((err) => {
+            msg.textContent = "Email Service Error!";
+            btn.disabled = false;
+            btn.textContent = "Send Verification Code";
+            console.error(err);
+        });
 }
 
 function verifyOTP() {
