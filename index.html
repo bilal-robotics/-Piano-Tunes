@@ -31,13 +31,14 @@
         <div class="hints">
             <div class="hint-group">
                 <span class="hint-label">WHITE KEYS →</span>
-                <span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span><span class="kbd">F</span><span class="kbd">G</span><span class="kbd">H</span><span class="kbd">J</span>
-                <span class="kbd">K</span><span class="kbd">L</span><span class="kbd">;</span>
+                <span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span><span class="kbd">F</span>
+                <span class="kbd">G</span><span class="kbd">H</span><span class="kbd">J</span><span class="kbd">K</span>
+                <span class="kbd">L</span><span class="kbd">;</span>
             </div>
             <div class="hint-group">
                 <span class="hint-label">BLACK KEYS →</span>
-                <span class="kbd">W</span><span class="kbd">E</span><span class="kbd">T</span><span class="kbd">Y</span><span class="kbd">U</span>
-                <span class="kbd">O</span><span class="kbd">P</span>
+                <span class="kbd">W</span><span class="kbd">E</span><span class="kbd">T</span><span class="kbd">Y</span>
+                <span class="kbd">U</span><span class="kbd">O</span><span class="kbd">P</span>
             </div>
         </div>
     </div>
@@ -80,7 +81,7 @@
     <div class="piano-body">
         <div class="keys-area" id="keys-area"></div>
     </div>
-    
+
     <div class="footer">♩ ♪ ♫ Piano Tunes — Press keys or click to play ♫ ♪ ♩</div>
     <div class="footer">© 2026 Bilal Saqib. All Rights Reserved.</div>
 </div>
@@ -92,36 +93,40 @@
         <!-- STEP 1: Name + Email -->
         <div id="reg-step">
             <h3>🎹 Welcome! Register to Play</h3>
-            <input type="text" id="username" placeholder="Enter Your Name" required>
+            <input type="text"  id="username"  placeholder="Enter Your Name"  required>
             <input type="email" id="useremail" placeholder="Enter Your Email" required>
             <button id="send-btn" onclick="handleRegister()">Send Verification Code</button>
+            <!-- FIX: sirf EK reg-msg id -->
             <p id="reg-msg" style="margin-top:10px; font-size:12px; color:#f472b6;"></p>
-            <p id="reg-msg" style="margin-top:10px; font-size:12px; color:#f472b6;"></p>
-<p style="font-size:11px; color:rgba(255,255,255,0.6); margin-top:5px;">
-    Already registered? Just enter details and click button to play.
-</p>
+            <p style="font-size:11px; color:rgba(255,255,255,0.6); margin-top:5px;">
+                Already registered? Just enter your details and click the button.
+            </p>
         </div>
 
         <!-- STEP 2: OTP -->
         <div id="otp-step" style="display:none;">
             <h3>📧 Check Your Email</h3>
-            <p style="font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:15px;">OTP sent to <span id="email-display" style="color:#c084fc;"></span></p>
-            <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" style="letter-spacing:8px; text-align:center; font-size:20px;">
+            <p style="font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:15px;">
+                OTP sent to <span id="email-display" style="color:#c084fc;"></span>
+            </p>
+            <input type="text" id="otp-input" placeholder="Enter 6-digit OTP"
+                   maxlength="6" style="letter-spacing:8px; text-align:center; font-size:20px;">
             <p id="timer-display" style="font-size:12px; color:#fbbf24; margin-bottom:10px;">⏳ Expires in: 5:00</p>
             <button onclick="verifyOTP()">✅ Verify & Play</button>
-            <button id="resend-btn" onclick="resendOTP()" style="margin-top:10px; background:transparent; border:1px solid rgba(192,132,252,0.4); color:#c084fc;">🔄 Resend OTP</button>
+            <button id="resend-btn" onclick="resendOTP()"
+                    style="margin-top:10px; background:transparent; border:1px solid rgba(192,132,252,0.4); color:#c084fc;">
+                🔄 Resend OTP
+            </button>
             <p id="otp-msg" style="margin-top:10px; font-size:12px; color:#f472b6;"></p>
         </div>
 
     </div>
 </div>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
-<script type="text/javascript">
-   (function(){
-      // Aapki provided Public Key
-      emailjs.init("dnyMhpsqF8cXW3F1Gya"); 
-   })();
+<!-- EmailJS — sirf ek baar load aur init -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    emailjs.init("dnyMhpsqF8cXW3F1Gya");
 </script>
 
 <script src="logic.js"></script>
