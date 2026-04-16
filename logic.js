@@ -323,10 +323,15 @@ async function handleRegister() {
 
        if (checkData.is_repeat) {
     btn.textContent = "Opening Piano...";
-    btn.disabled = false; // Ye line add karein taake button dobara kaam kare
-    closeModal();
-
-        } else {
+    
+    // Thora sa intezar kar ke modal band karein aur button reset karein
+    setTimeout(() => {
+        closeModal();
+        btn.disabled = false;
+        btn.textContent = "Send Verification Code";
+    }, 1000); 
+}
+         else {
             // NAYA USER - AB EMAILJS USE HOGA
             btn.textContent = "Sending OTP...";
             
