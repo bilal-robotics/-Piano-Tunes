@@ -301,6 +301,7 @@ function sendOtpViaEmailJS(name, email, btn, msg) {
     emailjs.send('service_e2620ra', 'template_3rivrlb', {
         user_name : name,
         user_email: email,
+        email: email, 
         otp_code  : generatedOTP
     })
     .then(() => {
@@ -310,6 +311,7 @@ function sendOtpViaEmailJS(name, email, btn, msg) {
         startTimer(300);
     })
     .catch(err => {
+        console.log(err);
         msg.style.color = '#f472b6';
         msg.textContent = "Email send failed! Check EmailJS settings.";
         btn.disabled    = false;
@@ -360,6 +362,7 @@ function resendOTP() {
     emailjs.send('service_e2620ra', 'template_3rivrlb', {
         user_name : name,
         user_email: email,
+        email: email, 
         otp_code  : generatedOTP
     })
     .then(() => {
@@ -370,6 +373,7 @@ function resendOTP() {
         resendBtn.textContent = "🔄 Resend OTP";
     })
     .catch(err => {
+       console.log(err);
         msg.style.color       = '#f472b6';
         msg.textContent       = "Resend failed! Try again.";
         resendBtn.disabled    = false;
