@@ -479,7 +479,7 @@ buildPiano();
 (function checkAlreadyVerified() {
     const verified = localStorage.getItem('piano_verified');
     if (verified === 'true') {
-        // Seedha modal band karo — form dobara nahi aayega
+        // Seedha modal band karo — backend call nahi, sirf modal hide
         document.getElementById('user-modal').style.display = 'none';
     }
 })();
