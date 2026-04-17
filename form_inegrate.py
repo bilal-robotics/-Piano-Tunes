@@ -14,7 +14,7 @@ CORS(app)
 # --- CONFIGURATION ---
 EXCEL_FILE = 'user_data.xlsx'
 SENDER_EMAIL = "pianogameapp00@gmail.com"
-SENDER_PASSWORD = "tmmp wxxj vzdq aamn"  # pianogameapp00 Gmail App Password
+SENDER_PASSWORD = "tmmp wxxj vzdq aamn"  # Yahan apna Gmail App Password likhein
 
 # OTP ko temporary save karne ke liye
 otp_storage = {}
@@ -129,6 +129,29 @@ def verify_otp():
     print(f"[VERIFIED] {email} → saved as '{name_to_save}'")
 
     return jsonify({"status": "success", "message": "Verified! Welcome to Piano Tunes."})
+
+
+# ─── ROUTE 4: Direct Save (Frontend ne OTP verify kar liya) ────────────────
+@app.route('/save_user', methods=['POST'])
+def save_user():
+    data      = request.json
+    name      = data.get('name', '').strip()
+    email     = data.get('email', '').strip()
+    timestamp = datetime.now().strftime("%Y-%m-%d %I:%M:%S %p")
+
+    if not name or not email:
+        return jsonify({"status": "error", "message": "Name and email required!"})
+
+    df        = load_df()
+    is_repeat = email.lower() in df['Email'].str.lower().values
+    name_to_save = 'Repeat' if is_repeat else name
+
+    new_row = {'Name': name_to_save, 'Email': email, 'Date_Time': timestamp}
+    df = pd.concat([pd.DataFrame([new_row]), df], ignore_index=True)
+    df.to_excel(EXCEL_FILE, index=False)
+
+    print(f"[SAVED] {email} as '{name_to_save}'")
+    return jsonify({"status": "success", "message": f"Saved as {name_to_save}!"})
 
 
 if __name__ == '__main__':
