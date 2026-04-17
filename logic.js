@@ -191,6 +191,7 @@ function ripple(el) {
 
 // ─── KEYBOARD CONTROL ────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
+  if (!e.key) return;
   const modal = document.getElementById('user-modal');
   if (modal && modal.style.display !== 'none') return;
   const k = e.key.toUpperCase();
@@ -202,7 +203,7 @@ document.addEventListener('keydown', e => {
     fireNote(nd.note, nd.oct, el || document.createElement('div'));
   }
 });
-document.addEventListener('keyup', e => { activeKeys.delete(e.key.toUpperCase()); });
+document.addEventListener('keyup', e => { if (e.key) activeKeys.delete(e.key.toUpperCase()); });
 
 // ─── CONTROLS ────────────────────────────────────────────────────────────────
 document.getElementById('oct-dn').addEventListener('click', () => {
@@ -276,6 +277,10 @@ async function handleRegister() {
         if (checkData.is_repeat) {
             // Purana user — seedha andar
             btn.textContent = "Welcome Back! Opening...";
+            // LocalStorage mein save karo
+            localStorage.setItem('piano_verified', 'true');
+            localStorage.setItem('piano_email', email);
+            localStorage.setItem('piano_name', name);
             showToast("🎹 Welcome Back! Piano Unlocked.");
             setTimeout(() => {
                 closeModal();
@@ -341,14 +346,21 @@ async function verifyOTP() {
 
         // Backend mein name, email save karo
         try {
-            await fetch('https://Bilalsaqib.pythonanywhere.com/verify_otp', {
+            const res = await fetch('https://Bilalsaqib.pythonanywhere.com/verify_otp', {
                 method : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body   : JSON.stringify({ name: name, email: email, otp: String(generatedOTP) })
             });
+            const data = await res.json();
+            console.log("Backend response:", data);
         } catch(e) {
             console.warn("Backend save failed:", e);
         }
+
+        // LocalStorage mein save karo taake refresh par dobara form na aaye
+        localStorage.setItem('piano_verified', 'true');
+        localStorage.setItem('piano_email', email);
+        localStorage.setItem('piano_name', name);
 
         showToast("🎹 Welcome! Piano Unlocked. Enjoy playing!");
         setTimeout(closeModal, 1500);
@@ -462,3 +474,12 @@ function showToast(message) {
 
 // ─── Init ────────────────────────────────────────────────────────────────────
 buildPiano();
+
+// ─── Refresh par check: pehle se verified hai? ───────────────────────────────
+(function checkAlreadyVerified() {
+    const verified = localStorage.getItem('piano_verified');
+    if (verified === 'true') {
+        // Seedha modal band karo — form dobara nahi aayega
+        document.getElementById('user-modal').style.display = 'none';
+    }
+})();
