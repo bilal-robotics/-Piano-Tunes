@@ -298,7 +298,7 @@ function sendOtpViaEmailJS(name, email, btn, msg) {
     btn.textContent = "Sending OTP...";
     generatedOTP    = Math.floor(100000 + Math.random() * 900000);
 
-    emailjs.send('service_e2620ra', 'template_3rivrlb', {
+    emailjs.send('service_9g2xels', 'template_degjvps', {
         user_name : name,
         user_email: email,
         email: email, 
@@ -359,7 +359,7 @@ function resendOTP() {
 
     generatedOTP = Math.floor(100000 + Math.random() * 900000);
 
-    emailjs.send('service_e2620ra', 'template_3rivrlb', {
+    emailjs.send('service_9g2xels', 'template_degjvps', {
         user_name : name,
         user_email: email,
         email: email, 
