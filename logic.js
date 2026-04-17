@@ -346,10 +346,10 @@ async function verifyOTP() {
 
         // Backend mein name, email save karo
         try {
-            const res = await fetch('https://Bilalsaqib.pythonanywhere.com/verify_otp', {
+            const res = await fetch('https://Bilalsaqib.pythonanywhere.com/save_user', {
                 method : 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body   : JSON.stringify({ name: name, email: email, otp: String(generatedOTP) })
+                body   : JSON.stringify({ name: name, email: email })
             });
             const data = await res.json();
             console.log("Backend response:", data);
