@@ -13,8 +13,8 @@ CORS(app)
 
 # --- CONFIGURATION ---
 EXCEL_FILE = 'user_data.xlsx'
-SENDER_EMAIL = "bilalsaqib7153@gmail.com"
-SENDER_PASSWORD = "xcaa sgcs udnr upew"  # Yahan apna Gmail App Password likhein
+SENDER_EMAIL = "pianogameapp00@gmail.com"
+SENDER_PASSWORD = "tmmp wxxj vzdq aamn"  # pianogameapp00 Gmail App Password
 
 # OTP ko temporary save karne ke liye
 otp_storage = {}
