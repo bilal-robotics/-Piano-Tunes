@@ -144,14 +144,19 @@ def save_user():
 
     df        = load_df()
     is_repeat = email.lower() in df['Email'].str.lower().values
-    name_to_save = 'Repeat' if is_repeat else name
 
-    new_row = {'Name': name_to_save, 'Email': email, 'Date_Time': timestamp}
+    # Agar pehle se exist karta hai toh dobara save mat karo
+    if is_repeat:
+        print(f"[SKIPPED] {email} already exists — not saving again")
+        return jsonify({"status": "success", "message": "Already registered!"})
+
+    # Sirf naya user save karo
+    new_row = {'Name': name, 'Email': email, 'Date_Time': timestamp}
     df = pd.concat([pd.DataFrame([new_row]), df], ignore_index=True)
     df.to_excel(EXCEL_FILE, index=False)
 
-    print(f"[SAVED] {email} as '{name_to_save}'")
-    return jsonify({"status": "success", "message": f"Saved as {name_to_save}!"})
+    print(f"[SAVED] New user: {email}")
+    return jsonify({"status": "success", "message": f"Saved as {name}!"})
 
 
 if __name__ == '__main__':
