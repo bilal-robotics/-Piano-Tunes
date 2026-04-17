@@ -321,9 +321,11 @@ function sendOtpViaEmailJS(name, email, btn, msg) {
 }
 
 // ─── STEP 2: Verify OTP ──────────────────────────────────────────────────────
-function verifyOTP() {
+async function verifyOTP() {
     const userOTP = document.getElementById('otp-input').value.trim();
     const msg     = document.getElementById('otp-msg');
+    const name    = document.getElementById('username').value.trim();
+    const email   = document.getElementById('useremail').value.trim();
 
     if (!userOTP) {
         msg.style.color = '#f472b6';
@@ -335,7 +337,19 @@ function verifyOTP() {
     if (userOTP == generatedOTP) {
         if (timerInterval) clearInterval(timerInterval);
         msg.style.color = '#4ade80';
-        msg.textContent = "✅ Verified!";
+        msg.textContent = "✅ Verified! Saving...";
+
+        // Backend mein name, email save karo
+        try {
+            await fetch('https://Bilalsaqib.pythonanywhere.com/verify_otp', {
+                method : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body   : JSON.stringify({ name: name, email: email, otp: String(generatedOTP) })
+            });
+        } catch(e) {
+            console.warn("Backend save failed:", e);
+        }
+
         showToast("🎹 Welcome! Piano Unlocked. Enjoy playing!");
         setTimeout(closeModal, 1500);
     } else {
@@ -343,6 +357,7 @@ function verifyOTP() {
         msg.textContent = "❌ Invalid OTP! Try again.";
     }
 }
+
 
 // ─── Resend OTP ──────────────────────────────────────────────────────────────
 function resendOTP() {
